@@ -1,0 +1,207 @@
+﻿@model School.Avoir
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Visuel", "Infrastructure", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-inline">
+                    <h4>Avoir</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @*@Html.LabelFor(model => model.IdEtab, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                        <div class="col-md-2">
+                            <label for="etab">Etablissement</label>
+                        </div>
+                        <div class="col-md-2">
+
+                            <select class="form-select" aria-label="Default select example" name="IdEtab">
+                                <option selected>................</option>
+                                @foreach (var elt in ViewData["dt"] as List<Etablissement>)
+                                {
+                                    <option value="@elt.IdEtab">
+
+                                        @elt.IdEtab.  @elt.Nom
+
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-4">
+                            <label for="etab">Infrastructure</label>
+                        </div>
+                        <div class="col-md-2">
+
+                            <select class="form-select" aria-label="Default select example" name="IdInfra">
+                                <option selected>................</option>
+                                @foreach (var item in ViewData["data"] as List<Infrastrucutre>)
+                                {
+                                    <option value="@item.IdInfra">
+
+                                        @item.IdInfra.  @item.Description
+
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-2">
+                            @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-8">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <span><i class="bi bi-table me-2"></i></span> INFRASTRUCTURE PAR ECOLE
+                </div>
+                <div class="card-body">
+
+                    <p>
+                        @Html.ActionLink("Create New", "Create")
+                    </p>
+
+                    <table class="table">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IdEtab)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.IdInfra)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Nombre)
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @foreach (var item in ViewData["Avoir"] as List<Avoir>)
+                        {
+                            <tr>
+                                <td>
+                                    @item.IdEtab
+                                </td>
+                                <td>
+                                    @item.IdInfra
+                                </td>
+                                <td>
+                                    @item.Nombre
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }, new { @class = "button" }) 
+                                    @*@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |*@
+                                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }, new { @class = "button" })
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<br/>
+
+    <div class="row">
+        <div class="container-md-12">
+            <div class="card h-100">
+                <div class="card-header">
+                    <span class="me-2"><i class="bi bi-bar-chart-fill"></i></span>
+                    Area Chart Example
+                </div>
+                <div class="card-body">
+                    <figure class="highcharts-figure">
+                        <div id="container" style="height: 400px"></div>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+        <script src="~/Contents/jquery-3.5.1.js"></script>
+        <script src="~/Contents/jquery.dataTables.min.js"></script>
+        <script src="~/Contents/dataTables.bootstrap5.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+
+
+        <script>
+            $.ajax({
+                type: "GET",
+                url: "/Visuel/ChartVisuel",
+                success: function (data) {
+                    console.log(data)
+                    const info = data.infra.map(inf => ({
+                        name: inf.Description,
+                        data: data.etab.map(et => {
+                            return data.etabInfra.find(etInf => etInf.IdEtab == et.IdEtab && etInf.IdInfra == inf.IdInfra) ? data.etabInfra.find(etInf => etInf.IdEtab == et.IdEtab).Nombre : 0
+                        })
+                    }));
+
+                    console.log(info, " INFO")
+                    Highcharts.chart('container', {
+                        chart: {
+                            type: 'column'
+                        },
+                        xAxis: {
+                            categories: data.etab.map(et => et.Nom),
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: "Nombre d'équipements"
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+
+
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: info
+                    });
+                },
+                faillure: function () {
+                    console.log("NO")
+                }
+            })
+        </script>

@@ -1,0 +1,204 @@
+﻿@model IEnumerable<School.Etablissement>
+
+@{
+    ViewBag.Title = "Read";
+}
+
+@*<h2>Read</h2>*@
+
+<p>
+    @Html.ActionLink("Ajouter un établissement", "Create",new { /* id=item.PrimaryKey */ },new { @class = "buttonP"})
+</p>
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <span><i class="bi bi-table me-2"></i></span> LISTE DES ETABLIBLEMENTS
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Nom)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Effectif)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Ville)
+                            </th>
+                            <th></th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Nom)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Effectif)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Ville)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Modifier", "Update", new { /* id=item.PrimaryKey */ } , new { @class = "button" }) 
+                                    @Html.ActionLink("Supprimer", "Delete", new { /* id=item.PrimaryKey */ }, new { @class = "button" })
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<br />
+@*<div class="row">
+    <form class="row ">
+
+        <div class="col-md-7">
+            <select class="form-select" id="validationCustom04" required>
+                <option selected disabled value="" onchange="recup(this.value)">Ville</option>
+                <option>...</option>
+            </select>
+            <div class="invalid-feedback">
+                Svp, choisissez une ville!
+            </div>
+        </div>
+        <div class="col-md-5">
+            <button type="submit" class="btn btn-primary mb-3"> Valider </button>
+        </div>
+    </form>
+
+</div>*@
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header">
+                <span class="me-2"><i class="bi bi-bar-chart-fill"></i></span>
+                Effectif par établissement
+            </div>
+            <div class="card-body">
+                <canvas class="chart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-header">
+                <span class="me-2"><i class="bi bi-bar-chart-fill"></i></span>
+                Effectif par ville
+            </div>
+            <div class="card-body">
+                <canvas class="chartVille" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
+<script src="~/Contents/jquery-3.5.1.js"></script>
+<script src="~/Contents/jquery.dataTables.min.js"></script>
+<script src="~/Contents/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript">
+    //$((e) => {
+    //    e.preventDefault();
+    //});
+    $.ajax({
+        type: "GET",
+        url: "stat",
+        success: function (data) {
+            const charts = document.querySelectorAll(".chart");
+            const effectifs = [];
+            const etabs = [];
+            data.forEach((etab) => {
+                effectifs.push(etab.Effectif);
+                etabs.push(etab.Nom);
+            });
+            charts.forEach(function (chart) {
+                var ctx = chart.getContext("2d");
+                var myChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: etabs,
+                        datasets: [{
+                            label: 'Effectif',
+                            data: effectifs,
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                              'rgb(54, 162, 235)',
+                              'rgb(255, 205, 86)',
+                              'rgb(255, 45, 81)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+            });
+        },
+        failure: function (error) {
+            console.log("NO");
+        },
+    });
+
+    ///CHART EFFECTIF PAR VILLE
+   
+
+
+    ///CHART EFFECTIF PAR VILLE
+    $.ajax({
+        type: "GET",
+        url: "/Ecole/Ville",
+        success: function (data) {
+            console.log(data)
+            const charts = document.querySelectorAll(".chartVille");
+            const villes = [];
+            const effectifs = [];
+            data.forEach((etab) => {
+                villes.push(etab.ville);
+                effectifs.push(etab.Effectifs)
+            });
+            charts.forEach(function (chart) {
+                var ctx = chart.getContext("2d");
+                var myChart = new Chart(ctx, {
+                    type: "bar",
+                    data:{
+                        labels: villes,
+                        datasets: [{
+                            label: 'Effectif',
+                            data: effectifs,
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                              'rgb(54, 162, 235)',
+                              'rgb(255, 205, 86)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                });
+            });
+        },
+        faillure: function(error){
+
+        },
+    })
+    $(document).ready(function () {
+        $(".data-table").each(function (_, table) {
+            $(table).DataTable();
+        });
+    });
+   
+</script>

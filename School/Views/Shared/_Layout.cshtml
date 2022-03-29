@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="@Url.Content("~/Contents/bootstrap.css")" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Contents/bootstrap.min.css")" type="text/css" />
+    <link rel="stylesheet" href="@Url.Content("~/Contents/Style.css")" type="text/css" />
+</head>
+<body>
+    <header>
+       
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            @Html.ActionLink("Ecole", "Read", "Ecole", null, new { @class = "nav-link active" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Infrastructure", "Create", "Infrastructure", null, new { @class = "nav-link active" })
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Visualisation", "Visuel", "Infrastructure", null, new { @class = "nav-link active" })
+                        </li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        @RenderBody()
+    </div>
+    <footer class="container">
+        <p>@DateTime.Now.Year - Dashboard MVC</p>
+    </footer>
+</body>
+</html>

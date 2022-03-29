@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DB_SCHOOLModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Avoir">
+    <Key>
+      <PropertyRef Name="IdEtab" />
+      <PropertyRef Name="IdInfra" />
+    </Key>
+    <Property Name="IdEtab" Type="int" Nullable="false" />
+    <Property Name="IdInfra" Type="int" Nullable="false" />
+    <Property Name="Nombre" Type="int" />
+  </EntityType>
+  <EntityType Name="Etablissement">
+    <Key>
+      <PropertyRef Name="IdEtab" />
+    </Key>
+    <Property Name="IdEtab" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nom" Type="varchar" MaxLength="50" />
+    <Property Name="Effectif" Type="int" />
+    <Property Name="Ville" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Infrastrucutre">
+    <Key>
+      <PropertyRef Name="IdInfra" />
+    </Key>
+    <Property Name="IdInfra" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Description" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <Association Name="FK_Avoir_Etablissement">
+    <End Role="Etablissement" Type="Self.Etablissement" Multiplicity="1" />
+    <End Role="Avoir" Type="Self.Avoir" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Etablissement">
+        <PropertyRef Name="IdEtab" />
+      </Principal>
+      <Dependent Role="Avoir">
+        <PropertyRef Name="IdEtab" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Avoir_Infrastrucutre">
+    <End Role="Infrastrucutre" Type="Self.Infrastrucutre" Multiplicity="1" />
+    <End Role="Avoir" Type="Self.Avoir" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Infrastrucutre">
+        <PropertyRef Name="IdInfra" />
+      </Principal>
+      <Dependent Role="Avoir">
+        <PropertyRef Name="IdInfra" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="DB_SCHOOLModelStoreContainer">
+    <EntitySet Name="Avoir" EntityType="Self.Avoir" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Etablissement" EntityType="Self.Etablissement" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Infrastrucutre" EntityType="Self.Infrastrucutre" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Avoir_Etablissement" Association="Self.FK_Avoir_Etablissement">
+      <End Role="Etablissement" EntitySet="Etablissement" />
+      <End Role="Avoir" EntitySet="Avoir" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Avoir_Infrastrucutre" Association="Self.FK_Avoir_Infrastrucutre">
+      <End Role="Infrastrucutre" EntitySet="Infrastrucutre" />
+      <End Role="Avoir" EntitySet="Avoir" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
